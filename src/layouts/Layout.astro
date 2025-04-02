@@ -1,22 +1,49 @@
-<!doctype html>
-<html lang="en">
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+import "../styles/global.css";
+---
+
+<!DOCTYPE html>
+<html lang="es">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>{title}</title>
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<style>
+			:root {
+				--primary-color: #1a237e;
+				--secondary-color: #0d47a1;
+				--accent-color: #2196f3;
+			}
+			body {
+				font-family: 'Inter', sans-serif;
+				background-color: #f5f5f5;
+			}
+			.card {
+				background: white;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+				padding: 1.5rem;
+				margin-bottom: 1rem;
+			}
+		</style>
 	</head>
 	<body>
-		<slot />
+		<header class="bg-[#1a237e] text-white p-4">
+			<div class="container mx-auto">
+				<h1 class="text-2xl font-bold">SISTEQ Control - Dashboard</h1>
+			</div>
+		</header>
+		<main class="container mx-auto p-4">
+			<slot />
+		</main>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
