@@ -1,75 +1,270 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Datos procesados de los archivos CSV
+const datosMarzo = {
+	impresiones: 45106,
+	clics: 1067,
+	ctr: 2.37,
+	conversiones: 31,
+	costo: 6586.89,
+	costoPorConversion: 212.48
+};
+
+const datosEneFeb = {
+	impresiones: 107042,
+	clics: 2225,
+	ctr: 2.08,
+	conversiones: 25,
+	costo: 10028.31,
+	costoPorConversion: 401.13
+};
+
+// Calcular cambios porcentuales (normalizado por mes)
+const cambios = {
+	impresiones: ((datosMarzo.impresiones / 1) / (datosEneFeb.impresiones / 2) - 1) * 100,
+	clics: ((datosMarzo.clics / 1) / (datosEneFeb.clics / 2) - 1) * 100,
+	ctr: datosMarzo.ctr - datosEneFeb.ctr,
+	conversiones: ((datosMarzo.conversiones / 1) / (datosEneFeb.conversiones / 2) - 1) * 100,
+	costo: ((datosMarzo.costo / 1) / (datosEneFeb.costo / 2) - 1) * 100,
+	costoPorConversion: ((datosMarzo.costoPorConversion) / (datosEneFeb.costoPorConversion) - 1) * 100
+};
+
+// Datos de rendimiento por ubicación 
+const topUbicaciones = [
+	{ ubicacion: "Estado de México", clics: 235, impresiones: 12660, ctr: 1.86 },
+	{ ubicacion: "Nuevo León", clics: 182, impresiones: 5434, ctr: 3.35 },
+	{ ubicacion: "Jalisco", clics: 172, impresiones: 10023, ctr: 1.72 },
+	{ ubicacion: "Puebla", clics: 110, impresiones: 4766, ctr: 2.31 },
+	{ ubicacion: "Veracruz", clics: 93, impresiones: 3604, ctr: 2.58 }
+];
+
+// Datos de productos top por clics
+const topProductos = [
+	{ producto: "Vibrador industrial", categoria: "Ferretería", clics: 53, impresiones: 3530, ctr: 1.50 },
+	{ producto: "Válvula de mariposa", categoria: "Ferretería", clics: 48, impresiones: 4990, ctr: 0.96 },
+	{ producto: "Colector de polvo para madera", categoria: "Ferretería", clics: 39, impresiones: 4377, ctr: 0.89 },
+	{ producto: "Indicador de nivel para silo 110VAC/50-60HZ", categoria: "Ferretería", clics: 36, impresiones: 3401, ctr: 1.06 },
+	{ producto: "Cabina de pintura TECNODRY", categoria: "Industria", clics: 25, impresiones: 1550, ctr: 1.61 }
+];
+
+// Datos de desempeño diario para gráficos de tendencia
+const datosDiarios = [
+	{ dia: "1 Mar", clics: 145, impresiones: 2809, ctr: 5.16, conversiones: 1 },
+	{ dia: "5 Mar", clics: 6, impresiones: 431, ctr: 1.39, conversiones: 0 },
+	{ dia: "10 Mar", clics: 62, impresiones: 2313, ctr: 2.68, conversiones: 5 },
+	{ dia: "15 Mar", clics: 65, impresiones: 3088, ctr: 2.10, conversiones: 1 },
+	{ dia: "20 Mar", clics: 67, impresiones: 1306, ctr: 5.13, conversiones: 7 },
+	{ dia: "25 Mar", clics: 12, impresiones: 641, ctr: 1.87, conversiones: 0 },
+	{ dia: "31 Mar", clics: 35, impresiones: 2106, ctr: 1.66, conversiones: 0 }
+];
+
+// YTD (Año hasta la fecha) - Combinando los datos de los tres meses
+const datosYTD = {
+	impresiones: datosEneFeb.impresiones + datosMarzo.impresiones,
+	clics: datosEneFeb.clics + datosMarzo.clics,
+	ctr: ((datosEneFeb.clics + datosMarzo.clics) / (datosEneFeb.impresiones + datosMarzo.impresiones)) * 100,
+	conversiones: datosEneFeb.conversiones + datosMarzo.conversiones,
+	costo: datosEneFeb.costo + datosMarzo.costo,
+	costoPorConversion: (datosEneFeb.costo + datosMarzo.costo) / (datosEneFeb.conversiones + datosMarzo.conversiones)
+};
 ---
 
 <Layout title="Dashboard SISTEQ Control">
-	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-		<!-- KPIs -->
-		<div class="card">
-			<h3 class="text-lg font-semibold mb-2">Impresiones Totales</h3>
-			<p class="text-3xl font-bold text-[#1a237e]">45,106</p>
-			<p class="text-sm text-gray-600">+12.5% vs mes anterior</p>
+	<!-- Resumen YTD -->
+	<div class="mb-6">
+		<div class="flex items-center justify-between mb-4">
+			<h2 class="text-xl font-bold text-gray-800">Rendimiento YTD (Enero - Marzo 2025)</h2>
+			<div class="flex space-x-2">
+				<button class="px-4 py-2 text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+					Exportar
+				</button>
+				<button class="px-4 py-2 text-sm text-white bg-[#00205B] rounded-lg hover:bg-[#001A4D]">
+					Compartir
+				</button>
+			</div>
 		</div>
-		<div class="card">
-			<h3 class="text-lg font-semibold mb-2">Clics Totales</h3>
-			<p class="text-3xl font-bold text-[#1a237e]">1,245</p>
-			<p class="text-sm text-gray-600">+8.3% vs mes anterior</p>
-		</div>
-		<div class="card">
-			<h3 class="text-lg font-semibold mb-2">CTR Promedio</h3>
-			<p class="text-3xl font-bold text-[#1a237e]">2.76%</p>
-			<p class="text-sm text-gray-600">+0.5% vs mes anterior</p>
-		</div>
-		<div class="card">
-			<h3 class="text-lg font-semibold mb-2">Conversiones</h3>
-			<p class="text-3xl font-bold text-[#1a237e]">31</p>
-			<p class="text-sm text-gray-600">+15.2% vs mes anterior</p>
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Impresiones</h3>
+				<p class="kpi-value text-[#00205B]">{new Intl.NumberFormat('es-MX').format(datosYTD.impresiones)}</p>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Clics</h3>
+				<p class="kpi-value text-[#00205B]">{new Intl.NumberFormat('es-MX').format(datosYTD.clics)}</p>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">CTR</h3>
+				<p class="kpi-value text-[#00205B]">{datosYTD.ctr.toFixed(2)}%</p>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Conversiones</h3>
+				<p class="kpi-value text-[#00205B]">{datosYTD.conversiones}</p>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Costo</h3>
+				<p class="kpi-value text-[#00205B]">$MXN {new Intl.NumberFormat('es-MX').format(Math.round(datosYTD.costo))}</p>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Costo/Conv.</h3>
+				<p class="kpi-value text-[#00205B]">$MXN {new Intl.NumberFormat('es-MX').format(Math.round(datosYTD.costoPorConversion))}</p>
+			</div>
 		</div>
 	</div>
 
-	<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-		<!-- Gráfico de tendencias -->
-		<div class="card">
-			<h3 class="text-lg font-semibold mb-4">Tendencia de Impresiones y Clics</h3>
-			<canvas id="tendenciasChart"></canvas>
-		</div>
-
-		<!-- Gráfico de ubicaciones -->
-		<div class="card">
-			<h3 class="text-lg font-semibold mb-4">Rendimiento por Ubicación</h3>
-			<canvas id="ubicacionesChart"></canvas>
+	<!-- Resumen del mes actual (Marzo) -->
+	<div class="mb-6">
+		<h2 class="text-xl font-bold text-gray-800 mb-4">Rendimiento de Marzo 2025</h2>
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Impresiones</h3>
+				<p class="kpi-value text-[#00205B]">{new Intl.NumberFormat('es-MX').format(datosMarzo.impresiones)}</p>
+				<span class={`kpi-change ${cambios.impresiones >= 0 ? 'positive' : 'negative'}`}>
+					{cambios.impresiones >= 0 ? '↑' : '↓'} {Math.abs(cambios.impresiones).toFixed(1)}%
+				</span>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Clics</h3>
+				<p class="kpi-value text-[#00205B]">{new Intl.NumberFormat('es-MX').format(datosMarzo.clics)}</p>
+				<span class={`kpi-change ${cambios.clics >= 0 ? 'positive' : 'negative'}`}>
+					{cambios.clics >= 0 ? '↑' : '↓'} {Math.abs(cambios.clics).toFixed(1)}%
+				</span>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">CTR</h3>
+				<p class="kpi-value text-[#00205B]">{datosMarzo.ctr.toFixed(2)}%</p>
+				<span class={`kpi-change ${cambios.ctr >= 0 ? 'positive' : 'negative'}`}>
+					{cambios.ctr >= 0 ? '↑' : '↓'} {Math.abs(cambios.ctr).toFixed(2)}%
+				</span>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Conversiones</h3>
+				<p class="kpi-value text-[#00205B]">{datosMarzo.conversiones}</p>
+				<span class={`kpi-change ${cambios.conversiones >= 0 ? 'positive' : 'negative'}`}>
+					{cambios.conversiones >= 0 ? '↑' : '↓'} {Math.abs(cambios.conversiones).toFixed(1)}%
+				</span>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Costo</h3>
+				<p class="kpi-value text-[#00205B]">$MXN {new Intl.NumberFormat('es-MX').format(Math.round(datosMarzo.costo))}</p>
+				<span class={`kpi-change ${cambios.costo <= 0 ? 'positive' : 'negative'}`}>
+					{cambios.costo <= 0 ? '↓' : '↑'} {Math.abs(cambios.costo).toFixed(1)}%
+				</span>
+			</div>
+			<div class="card kpi-card">
+				<h3 class="text-sm font-medium text-gray-500">Costo/Conv.</h3>
+				<p class="kpi-value text-[#00205B]">$MXN {new Intl.NumberFormat('es-MX').format(Math.round(datosMarzo.costoPorConversion))}</p>
+				<span class={`kpi-change ${cambios.costoPorConversion <= 0 ? 'positive' : 'negative'}`}>
+					{cambios.costoPorConversion <= 0 ? '↓' : '↑'} {Math.abs(cambios.costoPorConversion).toFixed(1)}%
+				</span>
+			</div>
 		</div>
 	</div>
 
-	<div class="card mb-8">
-		<h3 class="text-lg font-semibold mb-4">Insights y Recomendaciones</h3>
-		<div class="space-y-4">
-			<div class="p-4 bg-blue-50 rounded-lg">
-				<h4 class="font-semibold text-blue-800">Insights Positivos</h4>
-				<ul class="list-disc list-inside text-blue-700">
-					<li>El CTR ha mejorado un 0.5% respecto al mes anterior</li>
-					<li>Las conversiones han aumentado un 15.2%</li>
-					<li>La Ciudad de México y el Estado de México son las ubicaciones con mejor rendimiento</li>
+	<!-- Gráficos de tendencias y ubicaciones -->
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+		<div class="card">
+			<div class="card-header">
+				<h3 class="text-lg font-semibold text-gray-800">Tendencia de Rendimiento Diario</h3>
+			</div>
+			<canvas id="tendenciasChart" height="300"></canvas>
+		</div>
+
+		<div class="card">
+			<div class="card-header">
+				<h3 class="text-lg font-semibold text-gray-800">Top Ubicaciones</h3>
+			</div>
+			<canvas id="ubicacionesChart" height="300"></canvas>
+		</div>
+	</div>
+
+	<!-- Productos Top y Conversiones -->
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+		<div class="card">
+			<div class="card-header">
+				<h3 class="text-lg font-semibold text-gray-800">Productos con Mayor Rendimiento</h3>
+			</div>
+			<div class="overflow-x-auto">
+				<table class="min-w-full divide-y divide-gray-200">
+					<thead>
+						<tr>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+							<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
+							<th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Clics</th>
+							<th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Impresiones</th>
+							<th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">CTR</th>
+						</tr>
+					</thead>
+					<tbody class="bg-white divide-y divide-gray-200">
+						{topProductos.map((producto) => (
+							<tr>
+								<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{producto.producto}</td>
+								<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{producto.categoria}</td>
+								<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{producto.clics}</td>
+								<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{new Intl.NumberFormat('es-MX').format(producto.impresiones)}</td>
+								<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{producto.ctr.toFixed(2)}%</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="card">
+			<div class="card-header">
+				<h3 class="text-lg font-semibold text-gray-800">Conversiones por Día</h3>
+			</div>
+			<canvas id="conversionesChart" height="300"></canvas>
+		</div>
+	</div>
+
+	<!-- Insights y Recomendaciones -->
+	<div class="card mb-6">
+		<div class="card-header">
+			<h3 class="text-lg font-semibold text-gray-800">Insights y Recomendaciones</h3>
+		</div>
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+			<div>
+				<h4 class="font-medium text-lg mb-3 text-[#00205B]">Hallazgos Clave</h4>
+				<ul class="space-y-3">
+					<li class="flex items-start">
+						<span class="inline-flex items-center justify-center flex-shrink-0 w-6 h-6 mr-2 bg-blue-100 text-blue-500 rounded-full">✓</span>
+						<span>El CTR ha mejorado un <strong>{cambios.ctr.toFixed(2)}%</strong> respecto al periodo anterior, lo que indica una mejor relevancia de los anuncios.</span>
+					</li>
+					<li class="flex items-start">
+						<span class="inline-flex items-center justify-center flex-shrink-0 w-6 h-6 mr-2 bg-blue-100 text-blue-500 rounded-full">✓</span>
+						<span>El costo por conversión ha disminuido un <strong>{Math.abs(cambios.costoPorConversion).toFixed(1)}%</strong>, mejorando la eficiencia del presupuesto.</span>
+					</li>
+					<li class="flex items-start">
+						<span class="inline-flex items-center justify-center flex-shrink-0 w-6 h-6 mr-2 bg-blue-100 text-blue-500 rounded-full">✓</span>
+						<span>Los productos de la categoría "Ferretería" tienen el mejor rendimiento, especialmente "Vibrador industrial" y "Válvula de mariposa".</span>
+					</li>
+					<li class="flex items-start">
+						<span class="inline-flex items-center justify-center flex-shrink-0 w-6 h-6 mr-2 bg-blue-100 text-blue-500 rounded-full">✓</span>
+						<span>El Estado de México genera el mayor volumen de impresiones y clics, seguido por Jalisco y Nuevo León.</span>
+					</li>
 				</ul>
 			</div>
-			<div class="p-4 bg-yellow-50 rounded-lg">
-				<h4 class="font-semibold text-yellow-800">Áreas de Mejora</h4>
-				<ul class="list-disc list-inside text-yellow-700">
-					<li>El costo por conversión es alto en algunas ubicaciones</li>
-					<li>Hay días con cero conversiones que requieren atención</li>
-					<li>Algunas ubicaciones tienen muy poco tráfico</li>
-				</ul>
-			</div>
-			<div class="p-4 bg-green-50 rounded-lg">
-				<h4 class="font-semibold text-green-800">Recomendaciones</h4>
-				<ul class="list-disc list-inside text-green-700">
-					<li>Optimizar el presupuesto en ubicaciones con bajo rendimiento</li>
-					<li>Revisar las pujas en días con alto costo por conversión</li>
-					<li>Considerar expandir la campaña en las ubicaciones con mejor rendimiento</li>
-					<li>Implementar estrategias específicas para mejorar las conversiones en días con bajo rendimiento</li>
+			
+			<div>
+				<h4 class="font-medium text-lg mb-3 text-[#00205B]">Recomendaciones</h4>
+				<ul class="space-y-3">
+					<li class="flex items-start">
+						<span class="inline-flex items-center justify-center flex-shrink-0 w-6 h-6 mr-2 bg-green-100 text-green-500 rounded-full">→</span>
+						<span>Aumentar el presupuesto para los productos top como "Vibrador industrial" y "Válvula de mariposa" para maximizar su rendimiento.</span>
+					</li>
+					<li class="flex items-start">
+						<span class="inline-flex items-center justify-center flex-shrink-0 w-6 h-6 mr-2 bg-green-100 text-green-500 rounded-full">→</span>
+						<span>Optimizar las campañas en el Estado de México y Jalisco para mejorar el CTR y aprovechar el alto volumen de impresiones.</span>
+					</li>
+					<li class="flex items-start">
+						<span class="inline-flex items-center justify-center flex-shrink-0 w-6 h-6 mr-2 bg-green-100 text-green-500 rounded-full">→</span>
+						<span>Revisar y mejorar la estrategia para los días con cero conversiones, especialmente a finales de mes.</span>
+					</li>
+					<li class="flex items-start">
+						<span class="inline-flex items-center justify-center flex-shrink-0 w-6 h-6 mr-2 bg-green-100 text-green-500 rounded-full">→</span>
+						<span>Considerar expandir la campaña a otros estados con potencial de crecimiento como Aguascalientes y Sonora.</span>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -79,63 +274,232 @@ import Layout from '../layouts/Layout.astro';
 <script>
 	declare const Chart: any;
 
-	// Gráfico de tendencias
-	const tendenciasCanvas = document.getElementById('tendenciasChart');
-	if (tendenciasCanvas instanceof HTMLCanvasElement) {
-		const tendenciasCtx = tendenciasCanvas.getContext('2d');
-		if (tendenciasCtx) {
-			new Chart(tendenciasCtx, {
-				type: 'line',
-				data: {
-					labels: ['1 Mar', '5 Mar', '10 Mar', '15 Mar', '20 Mar', '25 Mar', '31 Mar'],
-					datasets: [{
-						label: 'Impresiones',
-						data: [2809, 431, 2313, 3088, 4333, 1842, 2106],
-						borderColor: '#1a237e',
-						tension: 0.1
-					}, {
-						label: 'Clics',
-						data: [145, 6, 62, 65, 63, 43, 35],
-						borderColor: '#2196f3',
-						tension: 0.1
-					}]
-				},
-				options: {
-					responsive: true,
-					plugins: {
-						legend: {
-							position: 'top',
-						}
-					}
-				}
-			});
-		}
-	}
+	// Función para inicializar gráficos cuando el documento esté listo
+	document.addEventListener('DOMContentLoaded', () => {
+		// Chart.register(ChartDataLabels);
 
-	// Gráfico de ubicaciones
-	const ubicacionesCanvas = document.getElementById('ubicacionesChart');
-	if (ubicacionesCanvas instanceof HTMLCanvasElement) {
-		const ubicacionesCtx = ubicacionesCanvas.getContext('2d');
-		if (ubicacionesCtx) {
-			new Chart(ubicacionesCtx, {
-				type: 'bar',
-				data: {
-					labels: ['CDMX', 'Estado de México', 'Jalisco', 'Nuevo León', 'Puebla'],
-					datasets: [{
-						label: 'Impresiones',
-						data: [14275, 12660, 10023, 5434, 4766],
-						backgroundColor: '#1a237e'
-					}]
-				},
-				options: {
-					responsive: true,
-					plugins: {
-						legend: {
-							position: 'top',
+		// Datos para los gráficos
+		const datosDiarios = [
+			{ dia: "1 Mar", clics: 145, impresiones: 2809, ctr: 5.16, conversiones: 1 },
+			{ dia: "5 Mar", clics: 6, impresiones: 431, ctr: 1.39, conversiones: 0 },
+			{ dia: "10 Mar", clics: 62, impresiones: 2313, ctr: 2.68, conversiones: 5 },
+			{ dia: "15 Mar", clics: 65, impresiones: 3088, ctr: 2.10, conversiones: 1 },
+			{ dia: "20 Mar", clics: 67, impresiones: 1306, ctr: 5.13, conversiones: 7 },
+			{ dia: "25 Mar", clics: 12, impresiones: 641, ctr: 1.87, conversiones: 0 },
+			{ dia: "31 Mar", clics: 35, impresiones: 2106, ctr: 1.66, conversiones: 0 }
+		];
+
+		const topUbicaciones = [
+			{ ubicacion: "Estado de México", clics: 235, impresiones: 12660, ctr: 1.86 },
+			{ ubicacion: "Nuevo León", clics: 182, impresiones: 5434, ctr: 3.35 },
+			{ ubicacion: "Jalisco", clics: 172, impresiones: 10023, ctr: 1.72 },
+			{ ubicacion: "Puebla", clics: 110, impresiones: 4766, ctr: 2.31 },
+			{ ubicacion: "Veracruz", clics: 93, impresiones: 3604, ctr: 2.58 }
+		];
+
+		// Gráfico de tendencias
+		const tendenciasCanvas = document.getElementById('tendenciasChart');
+		if (tendenciasCanvas instanceof HTMLCanvasElement) {
+			const tendenciasCtx = tendenciasCanvas.getContext('2d');
+			if (tendenciasCtx) {
+				new Chart(tendenciasCtx, {
+					type: 'line',
+					data: {
+						labels: datosDiarios.map(d => d.dia),
+						datasets: [
+							{
+								label: 'Clics',
+								data: datosDiarios.map(d => d.clics),
+								borderColor: '#00205B',
+								backgroundColor: 'rgba(0, 32, 91, 0.1)',
+								borderWidth: 2,
+								tension: 0.4,
+								yAxisID: 'y'
+							},
+							{
+								label: 'CTR (%)',
+								data: datosDiarios.map(d => d.ctr),
+								borderColor: '#00A3E0',
+								backgroundColor: 'rgba(0, 163, 224, 0.1)',
+								borderWidth: 2,
+								tension: 0.4,
+								yAxisID: 'y1'
+							}
+						]
+					},
+					options: {
+						responsive: true,
+						interaction: {
+							mode: 'index',
+							intersect: false,
+						},
+						plugins: {
+							legend: {
+								position: 'top',
+							},
+							tooltip: {
+								callbacks: {
+									label: function(context: any) {
+										let label = context.dataset.label || '';
+										if (label) {
+											label += ': ';
+										}
+										if (context.dataset.yAxisID === 'y1') {
+											label += context.parsed.y + '%';
+										} else {
+											label += context.parsed.y;
+										}
+										return label;
+									}
+								}
+							}
+						},
+						scales: {
+							y: {
+								type: 'linear',
+								display: true,
+								position: 'left',
+								title: {
+									display: true,
+									text: 'Clics'
+								}
+							},
+							y1: {
+								type: 'linear',
+								display: true,
+								position: 'right',
+								title: {
+									display: true,
+									text: 'CTR (%)'
+								},
+								grid: {
+									drawOnChartArea: false,
+								}
+							},
+							x: {
+								title: {
+									display: true,
+									text: 'Fecha'
+								}
+							}
 						}
 					}
-				}
-			});
+				});
+			}
 		}
-	}
+
+		// Gráfico de ubicaciones
+		const ubicacionesCanvas = document.getElementById('ubicacionesChart');
+		if (ubicacionesCanvas instanceof HTMLCanvasElement) {
+			const ubicacionesCtx = ubicacionesCanvas.getContext('2d');
+			if (ubicacionesCtx) {
+				new Chart(ubicacionesCtx, {
+					type: 'bar',
+					data: {
+						labels: topUbicaciones.map(u => u.ubicacion),
+						datasets: [{
+							label: 'Impresiones',
+							data: topUbicaciones.map(u => u.impresiones),
+							backgroundColor: 'rgba(0, 32, 91, 0.7)',
+							borderWidth: 0,
+							borderRadius: 4,
+							barPercentage: 0.6,
+							categoryPercentage: 0.8
+						}, {
+							label: 'Clics',
+							data: topUbicaciones.map(u => u.clics),
+							backgroundColor: 'rgba(0, 163, 224, 0.7)',
+							borderWidth: 0,
+							borderRadius: 4,
+							barPercentage: 0.6,
+							categoryPercentage: 0.8
+						}]
+					},
+					options: {
+						indexAxis: 'y',
+						responsive: true,
+						plugins: {
+							legend: {
+								position: 'top',
+							},
+							tooltip: {
+								callbacks: {
+									label: function(context: any) {
+										let label = context.dataset.label || '';
+										if (label === 'Impresiones') {
+											return label + ': ' + new Intl.NumberFormat('es-MX').format(context.parsed.x);
+										} else {
+											return label + ': ' + context.parsed.x;
+										}
+									}
+								}
+							}
+						},
+						scales: {
+							x: {
+								stacked: false,
+								title: {
+									display: true,
+									text: 'Cantidad'
+								}
+							},
+							y: {
+								stacked: false,
+								title: {
+									display: true,
+									text: 'Ubicación'
+								}
+							}
+						}
+					}
+				});
+			}
+		}
+
+		// Gráfico de conversiones
+		const conversionesCanvas = document.getElementById('conversionesChart');
+		if (conversionesCanvas instanceof HTMLCanvasElement) {
+			const conversionesCtx = conversionesCanvas.getContext('2d');
+			if (conversionesCtx) {
+				new Chart(conversionesCtx, {
+					type: 'bar',
+					data: {
+						labels: datosDiarios.map(d => d.dia),
+						datasets: [{
+							label: 'Conversiones',
+							data: datosDiarios.map(d => d.conversiones),
+							backgroundColor: 'rgba(76, 175, 80, 0.7)',
+							borderWidth: 0,
+							borderRadius: 4,
+							barPercentage: 0.5,
+							categoryPercentage: 0.8
+						}]
+					},
+					options: {
+						responsive: true,
+						plugins: {
+							legend: {
+								position: 'top',
+							}
+						},
+						scales: {
+							y: {
+								beginAtZero: true,
+								title: {
+									display: true,
+									text: 'Número de Conversiones'
+								}
+							},
+							x: {
+								title: {
+									display: true,
+									text: 'Fecha'
+								}
+							}
+						}
+					}
+				});
+			}
+		}
+	});
 </script>

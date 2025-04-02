@@ -16,34 +16,140 @@ import "../styles/global.css";
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 		<script src="https://cdn.tailwindcss.com"></script>
+		<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 		<style>
 			:root {
-				--primary-color: #1a237e;
-				--secondary-color: #0d47a1;
-				--accent-color: #2196f3;
+				--primary-color: #00205B;
+				--secondary-color: #005EB8;
+				--accent-color: #00A3E0;
+				--success-color: #4CAF50;
+				--warning-color: #FF9800;
+				--danger-color: #F44336;
+				--light-gray: #F8F9FA;
+				--dark-gray: #343A40;
 			}
 			body {
-				font-family: 'Inter', sans-serif;
-				background-color: #f5f5f5;
+				font-family: 'Montserrat', sans-serif;
+				background-color: #f5f7fa;
+				color: #333;
 			}
 			.card {
 				background: white;
-				border-radius: 8px;
-				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+				border-radius: 10px;
+				box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 				padding: 1.5rem;
+				margin-bottom: 1.5rem;
+				border-top: 4px solid var(--primary-color);
+			}
+			.card-header {
+				border-bottom: 1px solid #eee;
+				padding-bottom: 0.75rem;
 				margin-bottom: 1rem;
+			}
+			.kpi-card {
+				text-align: center;
+				padding: 1.5rem;
+				transition: all 0.3s ease;
+			}
+			.kpi-card:hover {
+				transform: translateY(-5px);
+			}
+			.kpi-value {
+				font-size: 2rem;
+				font-weight: 700;
+				margin: 0.5rem 0;
+			}
+			.kpi-change {
+				font-size: 0.875rem;
+				padding: 0.25rem 0.5rem;
+				border-radius: 9999px;
+				display: inline-block;
+			}
+			.kpi-change.positive {
+				background-color: rgba(76, 175, 80, 0.1);
+				color: var(--success-color);
+			}
+			.kpi-change.negative {
+				background-color: rgba(244, 67, 54, 0.1);
+				color: var(--danger-color);
+			}
+			.header-logo {
+				height: 40px;
+			}
+			.sidebar {
+				background-color: var(--primary-color);
+				color: white;
+				height: 100vh;
+				position: fixed;
+				width: 250px;
+			}
+			.content {
+				margin-left: 250px;
+			}
+			@media (max-width: 768px) {
+				.sidebar {
+					display: none;
+				}
+				.content {
+					margin-left: 0;
+				}
 			}
 		</style>
 	</head>
 	<body>
-		<header class="bg-[#1a237e] text-white p-4">
-			<div class="container mx-auto">
-				<h1 class="text-2xl font-bold">SISTEQ Control - Dashboard</h1>
+		<div class="flex">
+			<aside class="sidebar py-6 px-4 hidden md:block">
+				<div class="mb-8 px-4">
+					<img src="/logo.svg" alt="SISTEQ Control" class="header-logo">
+				</div>
+				<nav class="px-4">
+					<ul class="space-y-2">
+						<li>
+							<a href="#" class="block py-2 px-4 rounded-lg bg-white bg-opacity-10 font-medium">
+								Dashboard
+							</a>
+						</li>
+						<li>
+							<a href="#" class="block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+								Campañas
+							</a>
+						</li>
+						<li>
+							<a href="#" class="block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+								Productos
+							</a>
+						</li>
+						<li>
+							<a href="#" class="block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+								Ubicaciones
+							</a>
+						</li>
+						<li>
+							<a href="#" class="block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition">
+								Informes
+							</a>
+						</li>
+					</ul>
+				</nav>
+			</aside>
+			<div class="content w-full">
+				<header class="bg-white shadow-sm">
+					<div class="container mx-auto px-4 py-4 flex justify-between items-center">
+						<div class="md:hidden">
+							<img src="/logo.svg" alt="SISTEQ Control" class="header-logo">
+						</div>
+						<h1 class="text-2xl font-bold text-gray-800 hidden md:block">Dashboard de Marketing Digital</h1>
+						<div>
+							<span class="text-sm text-gray-600">Última actualización: Marzo 2025</span>
+						</div>
+					</div>
+				</header>
+				<main class="container mx-auto p-4">
+					<slot />
+				</main>
 			</div>
-		</header>
-		<main class="container mx-auto p-4">
-			<slot />
-		</main>
+		</div>
 	</body>
 </html>
